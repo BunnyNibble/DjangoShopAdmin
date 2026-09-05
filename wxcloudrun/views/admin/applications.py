@@ -60,6 +60,7 @@ def admin_applications_list(request, admin):
             'merchant_address': app.merchant_address,
             'merchant_phone': app.merchant_phone,
             'merchant_type': getattr(app, 'merchant_type', 'NORMAL'),
+            'merchant_banner_file_id': getattr(app, 'merchant_banner_file_id', ''),
             'property_name': app.property_name,
             'property_community': app.property_community,
             'reviewed_by': app.reviewed_by.username if app.reviewed_by else None,
@@ -117,6 +118,7 @@ def admin_application_approve(request, admin):
                     description=application.merchant_description,
                     address=application.merchant_address,
                     contact_phone=application.merchant_phone,
+                    banner_url=getattr(application, 'merchant_banner_file_id', '') or '',
                 )
                 
                 # 商户申请通过时，自动绑定所在物业（如果申请时填写了物业ID）

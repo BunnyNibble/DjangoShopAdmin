@@ -322,24 +322,32 @@ def identity_apply(request):
         application.merchant_description = body.get('merchant_description', '')
         application.merchant_address = body.get('merchant_address', '')
         application.merchant_phone = body.get('merchant_phone', '')
+        banner_file_id = (body.get('banner_file_id') or '').strip()
         merchant_type = (body.get('merchant_type') or 'NORMAL').strip().upper()
         if merchant_type not in ['NORMAL', 'DISCOUNT_STORE']:
             return json_err('merchant_type 仅支持 NORMAL/DISCOUNT_STORE', status=400)
         application.merchant_type = merchant_type
-        
+        application.merchant_banner_file_id = banner_file_id
+
         if not application.merchant_name:
             return json_err('商户名称为必填项', status=400)
-        
+        if not banner_file_id:
+            return json_err('商户展示图为必填项', status=400)
+        if '127.0.0.1' in banner_file_id or 'localhost' in banner_file_id or '__tmp__' in banner_file_id:
+            return json_err('请先将展示图上传到云存储后再提交申请', status=400)
+        if not banner_file_id.startswith('cloud://'):
+            return json_err('banner_file_id 必须是云存储文件ID', status=400)
+
         # 商户申请时，必须选择所在物业（从存在的物业列表中选择）
         if not application.owner_property_id:
             return json_err('商户申请时必须选择所在物业', status=400)
-        
+
         # 验证物业是否存在
         try:
             PropertyProfile.objects.get(property_id=application.owner_property_id)
         except PropertyProfile.DoesNotExist:
             return json_err('所选物业不存在', status=404)
-    
+
     elif requested_identity == 'PROPERTY':
         application.property_name = body.get('property_name', '')
         application.property_community = body.get('property_community', '')

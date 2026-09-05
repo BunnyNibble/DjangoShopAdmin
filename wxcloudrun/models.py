@@ -681,6 +681,7 @@ class IdentityApplication(models.Model):
     merchant_address = models.CharField('商户地址', max_length=300, blank=True, default='')
     merchant_phone = models.CharField('商户联系电话', max_length=32, blank=True, default='')
     merchant_type = models.CharField('商户类型', max_length=20, choices=MERCHANT_TYPE_CHOICES, blank=True, default='NORMAL')
+    merchant_banner_file_id = models.CharField('商户展示图云文件ID', max_length=255, blank=True, default='')
     
     # 物业申请需填写的信息
     property_name = models.CharField('物业名称', max_length=200, blank=True, default='')
